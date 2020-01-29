@@ -62,6 +62,9 @@
                         <a href="#about">About</a>
                     </li>
                     <li class="page-scroll">
+                        <a href="#blog">Blog</a>
+                    </li>
+                    <li class="page-scroll">
                         <a href="#contact">Contact</a>
                     </li>
                 </ul>
@@ -250,6 +253,76 @@
                             </div>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--Blog-->
+    <section id="blog">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2>BLog</h2>
+                    <hr class="star-light">
+                </div>
+            </div>
+            <div class="row">
+               <div class="col-lg-12 text-center">
+               <h1>Idempotency</h1>
+                    
+               <p>One term that has become popular recently in programming circles is the word idempotency. Originally a math term, idempotency means that an operation can be applied multiple times without changing the result beyond the initial application.</p>
+ 
+<p>An everyday example of this is a machine which has separate on/off buttons. If you press the "on" button, it still has the same effect whether you do it once or multiple times. Likewise, pressing the "off" button will turn the machine off, regardless of how often you do it.</p>
+ 
+    <p>Idempotency really took off in programming with the rise of RESTful web services, which take advantage of standard HTTP methods to simplify a lot of coding, making it very popular among mobile app developers. It's also a key part of development operations (DevOps), which aims (among other things) to automate deployments, to the point where you can deploy multiple times a day.</p>
+ 
+        <p>SQL, for the most part, is NOT an idempotent language. If you try to create a table that already exists, you will get an error. If you try to drop a stored procedure that's already dropped, you will get an error. If you insert the same set of values multiple times into a table, you will get duplicates.</p>
+ 
+            <p>Some of the newer versions of SQL Server have made an effort to address this. In SQL Server 2016 and later editions, there are two new options available for certain DDL commands:
+CREATE OR ALTER: This applies to most most code objects (stored procedures, functions, and views). If it doesn't exist, SQL Server will create the object. If it does already exist, SQL Server changes the code definition to match the defined definition. For example,</p>
+ 
+<p>CREATE OR ALTER VIEW {View Name} AS {View Definition};</p>
+ 
+    <p>DROP ... IF EXISTS: This applies anywhere you can use the DROP command. If the specified object exists, it is dropped. If it doesn't nothing happens.</p>
+ 
+        <p>DROP TABLE IF EXISTS {Table Name};</p>
+ 
+            <p>You can also use this in an ALTER TABLE command as well when dropping columns or constraints.</p>
+ 
+                <p>ALTER TABLE {Table Name} DROP COLUMN IF EXISTS {Column Name};</p>
+ 
+                    <p>However, there are still many cases where SQL isn't automatically idempotent. In these cases, you'll have to build it in. A few examples:</p>
+ 
+                        <p>Adding a new column to a table:</p>
+                    <p>IF NOT EXISTS (
+SELECT * FROM sys.columns c
+INNER JOIN sys.tables t
+ON c.object_id = t.object_id
+WHERE
+t.name = '{Table Name}'
+AND c.name = '{New Column Name}'
+)
+ALTER TABLE {Table Name}
+ADD {New Column Name} {New Column Definition}
+;</p>
+ 
+<p>Inserting a new record into a table without creating duplicates:
+INSERT {Target Table} ({Column List})
+SELECT
+{List of new values}
+WHERE NOT EXISTS (
+SELECT * FROM {Target Table}
+WHERE
+{Identifying Columns} = {New record identifying columns}
+)</p>
+ 
+<p>It's a little extra effort, but making your code idempotent will drastically reduce the risk of bugs creeping into your database.</p>
+                </div>
+                <div class="col-lg-8 col-lg-offset-2 text-center">
+                    <a href="#" class="btn btn-lg btn-outline">
+                        <i class="fa fa-download"></i> Read more
+                    </a>
                 </div>
             </div>
         </div>
